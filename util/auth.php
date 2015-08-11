@@ -1,4 +1,4 @@
-<?php>
+<?php
 function CheckIfUserIsLoggedIn() {
 	$current_user = wp_get_current_user_id();
 	if($current_user == 0) {
@@ -21,4 +21,4 @@ function ReturnWithError() {
 		echo "This page requires that you have logged in. Sorry. Kinda.";
 		exit();
 }
-</php>
+?>
