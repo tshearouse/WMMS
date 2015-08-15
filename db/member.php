@@ -15,6 +15,28 @@ function db_CreateRoleTableIfNotExists() {
     }
 }
 
+function db_GetMemberDataForUserId($userId) {
+    $tableName = db_GetMemberTableName();
+    $user = strip_tags(addslashes($userId));
+    return $wpdb->get_row("SELECT * FROM $tableName WHERE user_id = $user");
+}
+
+function db_InsertOrUpdateMember($userId, $paidThrough, $rfidTag) {
+    $tableName = db_GetMemberTableName();
+    
+    $dbUser = strip_tags(addslashes($userId));
+    $dbPaidThrough = strip_tags(addslashes($paidThrough));
+    $dbRfidTag = strip_tags(addslashes($rfid_tag));
+    $memberRecord = db_GetMemberDataForUserId($userId);
+    if($memberRecord != null) {
+        $wpdb->update($tableName, 
+            array('paid_through' => $dbPaidThrough, 'rfid_tag' => $dbRfidTag),
+            array('user_id' => $dbUser));
+    } else {
+        $wpdb->insert($tableName, array('user_id' => $dbUser, 'paid_through' => $dbPaidThrough, 'rfid_tag' => $dbRfidTag));
+    }
+}
+
 function db_GetMemberTableName() {
     return $wpdb->prefix . "wmms_member_data";
 }
