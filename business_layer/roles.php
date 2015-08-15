@@ -6,26 +6,6 @@ abstract class UserRoles {
 	const Board = 2;
 	const Admin = 3;
 
-	private static $enumValues = NULL;
-
-	public static function parse($roleId) {
-		$constants = self::getConstants();
-		foreach($constants as $roleName => $roleValue) {
-			if($roleId == $roleValue) {
-				return $roleName;
-			}
-		}
-		return self::None;
-	}
-
-	private static function getConstants() {
-		if(self::$enumValues != null) {
-			return $enumValues;
-		}
-		$reflectedClass = new ReflectionClass(get_called_class());
-		$enumValues = $reflectedClass->getConstants();
-		return $enumValues;
-	}
 }
 
 function CheckIfUserHasRole($userId, $roleName) {
