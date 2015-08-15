@@ -16,9 +16,8 @@ function CheckIfUserIdMatches($existing_user_id) {
 }
 
 function ReturnWithError() {
-		header('HTTP/1.0 404 Not Found');
-		echo "<h1>Authentication required</h1>";
-		echo "This page requires that you have logged in. Sorry. Kinda.";
+		header('HTTP/1.0 403 Forbidden');
+		die('Either you are not logged in, or your account does not have access to do whatever you just tried to do.');
 		exit();
 }
 ?>
