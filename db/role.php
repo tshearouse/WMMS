@@ -1,6 +1,8 @@
 <?php
 global $wpdb;
 
+require_once('table_names.php');
+
 function db_CheckIfUserHasRole($user_id, $intended_role) {
 	db_CreateRoleTable();
 	$role_table_name = db_GetRoleTableName();
@@ -47,7 +49,4 @@ function db_CreateRoleTable() {
 	}
 }
 
-function db_GetRoleTableName() {
-	return $wpdb->prefix . "wmms_user_roles"
-}
 ?>

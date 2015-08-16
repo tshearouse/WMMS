@@ -39,4 +39,11 @@ function IsCurrentUserAdmin() {
 
 	return CheckIfUserHasRole($current_user, UserRoles::Admin);
 }
+
+function IsCurrentUserBoard() {
+    $current_user = wp_get_current_user_id();
+
+    return CheckIfUserHasRole($current_user, UserRoles::Admin);
+}
+
 ?>

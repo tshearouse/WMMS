@@ -1,4 +1,20 @@
 <?php
+
+function getAllUsersWithRole($roleId) {
+    require_once('roles.php');
+    require_once('../util/auth.php');
+    if(!(IsCurrentUserAdmin() || IsCurrentUserBoard())) {
+        ReturnWithError();
+    }
+    require_once('../db/member.php');
+    $users = db_GetAllUsersWithRole($roleId);
+    $wmmsMembers = array();
+    foreach($users as $user) {
+        $wmmsMembers[] = new WmmsMember($user.user, $user.paid_through, $user.rfid_tag);
+    }
+    return $wmmsMembers;
+}
+
 class WmmsMember {
 
     var $UserId;
@@ -24,11 +40,8 @@ class WmmsMember {
     function __construct3($userId, $paidThroughDate, $rfidTag) {
         $this->UserId = $userId;
 
-        include_once('../db/member.php');
-        $userDbRecord = db_GetMemberDataForUserId($userId);
-        if ($userDbRecord != null) {
-            $this->PaidThroughDate = $userDbRecord->paid_through;
-            $this->RfidTag = $userDbRecord->rfid_tag;
+        if($paidThroughDate == null || $rfidTag == null) {
+            populateFromDb($userId);
         }
         if($paidThroughDate != null) {
             $this->PaidThroughDate = $paidThroughDate;
@@ -38,8 +51,17 @@ class WmmsMember {
         }
     }
     
+    private function populateFromDb($userId) {
+        require_once('../db/member.php');
+        $userDbRecord = db_GetMemberDataForUserId($userId);
+        if ($userDbRecord != null) {
+            $this->PaidThroughDate = $userDbRecord->paid_through;
+            $this->RfidTag = $userDbRecord->rfid_tag;
+        }   
+    }
+    
     function saveToDb() {
-        include_once('../db/member.php');
+        require_once('../db/member.php');
         db_InsertOrUpdateMember($this::UserId, $this::PaidThroughDate, $this::RfidTag);
     }
     
