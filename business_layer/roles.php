@@ -34,6 +34,21 @@ function AdminRightsOrDie() {
 	}
 }
 
+function AdminOrBoardRightsOrDie() {
+    if(!IsCurrentUserAdmin() && !IsCurrentUserBoard()) {
+        require_once('../util/auth.php');
+        ReturnWithError();
+    }
+}
+
+function CheckIfUserIdMatches($existing_user_id) {
+    $current_user = wp_get_current_user_id();
+    if($current_user == $existing_user_id) {
+        return true;
+    }
+    return false;
+}
+
 function IsCurrentUserAdmin() {
 	$current_user = wp_get_current_user_id();
 

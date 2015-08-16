@@ -2,10 +2,7 @@
 
 function getAllUsersWithRole($roleId) {
     require_once('roles.php');
-    require_once('../util/auth.php');
-    if(!(IsCurrentUserAdmin() || IsCurrentUserBoard())) {
-        ReturnWithError();
-    }
+    AdminOrBoardRightsOrDie();
     require_once('../db/member.php');
     $users = db_GetAllUsersWithRole($roleId);
     $wmmsMembers = array();
@@ -52,6 +49,10 @@ class WmmsMember {
     }
     
     private function populateFromDb($userId) {
+        require_once('roles.php');
+        if(!CheckIfUserIdMatches($userId)) {
+            AdminOrBoardRightsOrDie();
+        }
         require_once('../db/member.php');
         $userDbRecord = db_GetMemberDataForUserId($userId);
         if ($userDbRecord != null) {
