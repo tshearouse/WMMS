@@ -12,7 +12,10 @@ $wmmsUser = new WmmsMember($userId);
 echo "<h3>" . $userInfo->first_name . " " . $userInfo->last_name . "</h3><p>&nbsp;</p><br />";
 echo "<p><b>Email:</b> " . $userInfo->user_email . "</p>";
 echo "<form method='POST' target='manage_members.php'>";
+echo "<input type='hidden' name='wmms_user' value='$userId' />";
+echo "<input type='hidden' name='edit_user' value='true' />";
 echo "<p>RFID tag number: <br /><input type='text' name='wmms_user_rfid' value='" . $wmmsUser->RfidTag . "' /></p>";
 echo "<p>Paid through: <br /><input type='text' name='wmms_user_paid_through' value='" . $wmmsUser->PaidThroughDate . "' /></p>";
+//TODO: Add checkboxes for each role
 echo "<p><input type='submit' value='Save Changes' /></p></form>";
 ?>
