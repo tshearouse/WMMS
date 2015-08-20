@@ -7,7 +7,7 @@ function getAllUsersWithRole($roleId) {
     $users = db_GetAllUsersWithRole($roleId);
     $wmmsMembers = array();
     foreach($users as $user) {
-        $wmmsMembers[] = new WmmsMember($user.user, $user.paid_through, $user.rfid_tag);
+        $wmmsMembers[] = new WmmsMember($user["user"], $user["paid_through"], $user["rfid_tag"]);
     }
     return $wmmsMembers;
 }
@@ -27,18 +27,18 @@ class WmmsMember {
     }
     
     function __construct1($userId) {
-        __construct2($userId, NULL);
+        $this->__construct2($userId, NULL);
     }
     
     function __construct2($userId, $paidThroughDate) {
-        __construct3($userId, $paidThroughDate, NULL);
+        $this->__construct3($userId, $paidThroughDate, NULL);
     }
     
     function __construct3($userId, $paidThroughDate, $rfidTag) {
         $this->UserId = $userId;
 
         if($paidThroughDate == null || $rfidTag == null) {
-            populateFromDb($userId);
+            $this->populateFromDb($userId);
         }
         if($paidThroughDate != null) {
             $this->PaidThroughDate = $paidThroughDate;
@@ -63,22 +63,22 @@ class WmmsMember {
     
     function saveToDb() {
         require_once('../db/member.php');
-        db_InsertOrUpdateMember($this::UserId, $this::PaidThroughDate, $this::RfidTag);
+        db_InsertOrUpdateMember($this->UserId, $this->PaidThroughDate, $this->RfidTag);
     }
     
     function hasRole($roleName) {
         require_once('roles.php');
-        return CheckIfUserHasRole($this::UserId, $roleName);
+        return CheckIfUserHasRole($this->UserId, $roleName);
     }
     
     function addRole($roleName) {
         require_once('roles.php');
-        AddRoleToUser($this::UserId, $roleName);
+        AddRoleToUser($this->UserId, $roleName);
     }
     
     function removeRole($roleName) {
         require_once('roles.php');
-        RemoveRoleFromUser($this::UserId, $roleName);
+        RemoveRoleFromUser($this->UserId, $roleName);
     }
 }
 ?>

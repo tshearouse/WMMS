@@ -29,14 +29,12 @@ function RemoveRoleFromUser($userId, $roleName) {
 
 function AdminRightsOrDie() {
 	if(!IsCurrentUserAdmin()) {
-		require_once('../util/auth.php');
 		ReturnWithError();
 	}
 }
 
 function AdminOrBoardRightsOrDie() {
     if(!IsCurrentUserAdmin() && !IsCurrentUserBoard()) {
-        require_once('../util/auth.php');
         ReturnWithError();
     }
 }
@@ -59,6 +57,18 @@ function IsCurrentUserBoard() {
     $current_user = wp_get_current_user_id();
 
     return CheckIfUserHasRole($current_user, UserRoles::Admin);
+}
+
+function CheckIfUserIsLoggedIn() {
+	$current_user = wp_get_current_user_id();
+	if($current_user == 0) {
+		ReturnWithError();
+	}
+}
+
+function ReturnWithError() {
+	header('HTTP/1.0 403 Forbidden');
+	die('Either you are not logged in, or your account does not have access to do whatever you just tried to do.');
 }
 
 ?>

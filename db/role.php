@@ -1,13 +1,13 @@
 <?php
-global $wpdb;
 
 require_once('table_names.php');
 
 function db_CheckIfUserHasRole($user_id, $intended_role) {
+	global $wpdb;
 	db_CreateRoleTable();
 	$role_table_name = db_GetRoleTableName();
 	$user = strip_tags(stripslashes($user_id));
-	$role = $wpdb->get_row("SELECT * FROM $role_table_name WHERE user = '$user' AND role = $intended_role") );
+	$role = $wpdb->get_row("SELECT * FROM $role_table_name WHERE user = '$user' AND role = $intended_role");
 	if($role) {
 		return true;
 	}
@@ -15,6 +15,7 @@ function db_CheckIfUserHasRole($user_id, $intended_role) {
 }
 
 function db_AddRoleToUser($user_id, $new_role) {
+	global $wpdb;
     if(!db_CheckIfUserHasRole($user_id, $new_role)) {
         db_CreateRoleTable();
         $role_table_name = db_GetRoleTableName();
@@ -26,6 +27,7 @@ function db_AddRoleToUser($user_id, $new_role) {
 }
 
 function db_RemoveRoleFromUser($user_id, $role_id) {
+	global $wpdb;
     if(db_CheckIfUserHasRole($user_id, $role_id)) {
         db_CreateRoleTable();
         $role_table_name = db_GetRoleTableName();
@@ -37,8 +39,9 @@ function db_RemoveRoleFromUser($user_id, $role_id) {
 }
 
 function db_CreateRoleTable() {
+	global $wpdb;
 	$tableName = db_GetRoleTableName();
-	if($wpdb->get_var("show tables like $tablename") != $tableName) {
+	if($wpdb->get_var("show tables like $tableName") != $tableName) {
 		$sql = "CREATE TABLE $tableName(" . 
 			" user VARCHAR(60) NOT NULL," . 
 			" role INT NOT NULL," . 

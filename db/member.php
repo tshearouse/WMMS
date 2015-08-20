@@ -1,16 +1,16 @@
 <?php
-global $wpdb;
 
 require_once('table_names.php');
 
 function db_CreateRoleTableIfNotExists() {
+    global $wpdb;
     $tableName = db_GetMemberTableName();
-    if($wpdb->get_var("show tables like $tablename") != $tableName) {
+    if($wpdb->get_var("show tables like $tableName") != $tableName) {
         $sql = "CREATE TABLE $tableName(" .
                 " user VARCHAR(60) NOT NULL," .
                 " paid_through DATE," .
                 " rfid_tag VARCHAR(255)," .
-                " PRIMARY KEY ( user_id ));"
+                " PRIMARY KEY ( user_id ));";
         require_once(ABSPATH . "wp_admin/includes/upgrade.php");
         dbDelta($sql);
         register_activation_hook( __FILE__, 'db_CreateRoleTableIfNotExists' );
@@ -18,12 +18,14 @@ function db_CreateRoleTableIfNotExists() {
 }
 
 function db_GetMemberDataForUserId($userId) {
+    global $wpdb;
     $tableName = db_GetMemberTableName();
     $user = strip_tags(addslashes($userId));
     return $wpdb->get_row("SELECT * FROM $tableName WHERE user = $user");
 }
 
 function db_GetAllUsersWithRole($roleId) {
+    global $wpdb;
     $memberTableName = db_GetMemberTableName();
     $roleTableName = db_GetRoleTableName();
     $dbRoleId = intval($roleId);
@@ -34,11 +36,12 @@ function db_GetAllUsersWithRole($roleId) {
 }
 
 function db_InsertOrUpdateMember($userId, $paidThrough, $rfidTag) {
+    global $wpdb;
     $tableName = db_GetMemberTableName();
     
     $dbUser = strip_tags(addslashes($userId));
     $dbPaidThrough = strip_tags(addslashes($paidThrough));
-    $dbRfidTag = strip_tags(addslashes($rfid_tag));
+    $dbRfidTag = strip_tags(addslashes($rfidTag));
     $memberRecord = db_GetMemberDataForUserId($userId);
     if($memberRecord != null) {
         $wpdb->update($tableName, 
