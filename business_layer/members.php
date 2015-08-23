@@ -80,5 +80,15 @@ class WmmsMember {
         require_once('roles.php');
         RemoveRoleFromUser($this->UserId, $roleName);
     }
+    
+    function getRolesAsPrettyPrint() {
+    	require_once('roles.php');
+    	$roleIds = GetRolesForUser($this->UserId);
+    	$roles = array();
+    	foreach ($roleIds as $roleId) {
+    		$roles[] = UserRoles::prettyPrint($roleId["role"]);
+    	}
+    	return $roles;
+    }
 }
 ?>

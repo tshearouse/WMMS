@@ -14,6 +14,15 @@ function db_CheckIfUserHasRole($user_id, $intended_role) {
 	return false;
 }
 
+function db_GetAllRolesForUser($user_id) {
+	global $wpdb;
+	db_CreateRoleTable();
+	$role_table_name = db_GetRoleTableName();
+	$dbUser = strip_tags(stripslashes($user_id));
+	$sql = "SELECT role FROM $role_table_name WHERE user = '$dbUser'";
+	return $wpdb->get_results($sql, ARRAY_A);
+}
+
 function db_AddRoleToUser($user_id, $new_role) {
 	global $wpdb;
     if(!db_CheckIfUserHasRole($user_id, $new_role)) {

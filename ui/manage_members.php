@@ -12,4 +12,5 @@ if(isset($_POST["edit_user"])) {
 	$wmmsUser = new WmmsMember($userId, $paidThrough, $rfidId);
 	$wmmsUser->saveToDb();
 }
+
 ?>

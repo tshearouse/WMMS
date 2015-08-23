@@ -5,23 +5,60 @@ abstract class UserRoles {
 	const Member = 1;
 	const Board = 2;
 	const Admin = 3;
+	
+	private static $enumValues = NULL;
+
+	public static function prettyPrint($roleId) {
+		$constants = self::getConstants();
+		foreach($constants as $roleName => $roleValue) {
+			if($roleId == $roleValue) {
+				return $roleName;
+			}
+		}
+		return "None";
+	}
+	
+	public static function listAllPrettyPrintRoles() {
+		$constants = self::getConstants();
+		return array_keys($constants);
+	}
+	
+	private static function getConstants() {
+		if(self::$enumValues != null) {
+			return $enumValues;
+		}
+		$reflectedClass = new ReflectionClass(get_called_class());
+		$enumValues = $reflectedClass->getConstants();
+		return $enumValues;
+	}
 
 }
 
 function CheckIfUserHasRole($userId, $roleName) {
 	require_once('../db/role.php');
+	if(!CheckIfUserIdMatches($userId)) {
+		AdminOrBoardRightsOrDie();
+	}
 	return db_CheckIfUserHasRole($userId, $roleName);
 }
 
+function GetRolesForUser($userId) {
+	require_once('../db/role.php');
+	if(!CheckIfUserIdMatches($userId)) {
+		AdminOrBoardRightsOrDie();
+	}	
+	return db_GetAllRolesForUser($userId);
+}
+
 function AddRoleToUser($userId, $roleName) {
-	AdminRightsOrDie();
+	AdminOrBoardRightsOrDie();
 
 	require_once('../db/role.php');
 	db_AddRoleToUser($userId, $roleName);
 }
 
 function RemoveRoleFromUser($userId, $roleName) {
-	AdminRightsOrDie();
+	AdminOrBoardRightsOrDie();
 
 	require_once('../db/role.php');
 	db_RemoveRoleFromUser($userId, $roleName);
