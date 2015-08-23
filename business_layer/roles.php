@@ -18,6 +18,16 @@ abstract class UserRoles {
 		return "None";
 	}
 	
+	public static function parseFromString($role) {
+		$constants = self::getConstants();
+		foreach($constants as $roleName => $roleValue) {
+			if($role == $roleName) {
+				return $roleValue;
+			}
+		}
+		return $this::None;
+	}
+	
 	public static function listAllPrettyPrintRoles() {
 		$constants = self::getConstants();
 		return array_keys($constants);

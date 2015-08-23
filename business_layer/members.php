@@ -71,9 +71,21 @@ class WmmsMember {
         return CheckIfUserHasRole($this->UserId, $roleName);
     }
     
+    function addTextRole($roleName) {
+        require_once('roles.php');
+    	$roleId = UserRoles::parseFromString($roleName);
+    	$this->addRole($roleId);
+    }
+    
     function addRole($roleName) {
         require_once('roles.php');
         AddRoleToUser($this->UserId, $roleName);
+    }
+    
+    function removeTextRole($roleName) {
+    	require_once('roles.php');
+    	$roleId = UserRoles::parseFromString($roleName);
+    	$this->removeRole($roleId);
     }
     
     function removeRole($roleName) {
