@@ -5,11 +5,22 @@ function getAllUsersWithRole($roleId) {
     AdminOrBoardRightsOrDie();
     require_once('../db/member.php');
     $users = db_GetAllUsersWithRole($roleId);
-    $wmmsMembers = array();
-    foreach($users as $user) {
-        $wmmsMembers[] = new WmmsMember($user["user"], $user["paid_through"], $user["rfid_tag"]);
-    }
-    return $wmmsMembers;
+    return mapUsers($users);
+}
+
+function getAllUsers() {
+	require_once('roles.php');
+	AdminOrBoardRightsOrDie();
+	require_once('../db/member.php');
+	$users = db_GetAllUsers();
+	return mapUsers($users);
+}
+
+function mapUsers($users) {
+	$wmmsMembers = array();
+	foreach($users as $user) {
+		$wmmsMembers[] = new WmmsMember($user["user"], $user["paid_through"], $user["rfid_tag"]);
+	}
 }
 
 class WmmsMember {

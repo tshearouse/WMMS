@@ -3,7 +3,7 @@ require_once '../business_layer/roles.php';
 require_once '../business_layer/members.php';
 AdminOrBoardRightsOrDie();
 
-$userId = strip_tags(stripslashes($_POST["wmms_user"]));
+$userId = strip_tags(stripslashes($_GET["wmms_user"]));
 $userInfo = get_userdata($userId);
 if(!$userInfo) {
 	die("User not found.");

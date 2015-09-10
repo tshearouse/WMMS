@@ -2,7 +2,7 @@
 
 require_once('table_names.php');
 
-function db_CreateRoleTableIfNotExists() {
+function db_CreateMemberTableIfNotExists() {
     global $wpdb;
     $tableName = db_GetMemberTableName();
     if($wpdb->get_var("show tables like $tableName") != $tableName) {
@@ -21,8 +21,19 @@ function db_GetMemberDataForUserId($userId) {
     global $wpdb;
     $tableName = db_GetMemberTableName();
     $user = strip_tags(addslashes($userId));
-    db_CreateRoleTableIfNotExists();
+    db_CreateMemberTableIfNotExists();
     return $wpdb->get_row("SELECT * FROM $tableName WHERE user = $user");
+}
+
+function db_GetAllUsers() {
+	global $wpdb;
+	$memberTableName = db_GetMemberTableName();
+	$roleTableName = db_GetRoleTableName();
+	db_CreateMemberTableIfNotExists();
+	db_CreateRoleTable();
+	$sql = "SELECT * FROM $memberTableName LEFT OUTER JOIN $roleTableName" . 
+			" ON $memberTableName.user = $roleTableName.user";
+	return $wpdb->get_results($sql, ARRAY_A);
 }
 
 function db_GetAllUsersWithRole($roleId) {
@@ -30,7 +41,8 @@ function db_GetAllUsersWithRole($roleId) {
     $memberTableName = db_GetMemberTableName();
     $roleTableName = db_GetRoleTableName();
     $dbRoleId = intval($roleId);
-    db_CreateRoleTableIfNotExists();
+    db_CreateMemberTableIfNotExists();
+    db_CreateRoleTable();
     $sql = "SELECT * FROM $memberTableName LEFT OUTER JOIN $roleTableName" . 
             " ON $memberTableName.user = $roleTableName.user" .
             " WHERE $roleTableName.role = $dbRoleId";
@@ -45,7 +57,7 @@ function db_InsertOrUpdateMember($userId, $paidThrough, $rfidTag) {
     $dbPaidThrough = strip_tags(addslashes($paidThrough));
     $dbRfidTag = strip_tags(addslashes($rfidTag));
     $memberRecord = db_GetMemberDataForUserId($userId);
-    db_CreateRoleTableIfNotExists();
+    db_CreateMemberTableIfNotExists();
     if($memberRecord != null) {
         $wpdb->update($tableName, 
             array('paid_through' => $dbPaidThrough, 'rfid_tag' => $dbRfidTag),

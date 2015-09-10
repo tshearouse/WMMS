@@ -4,6 +4,13 @@ require_once '../business_layer/members.php';
 AdminOrBoardRightsOrDie();
 
 if(isset($_POST["edit_user"])) {
+	processUserInfoEditForm();
+}
+
+displayUserData();
+
+
+function processUserInfoEditForm() {
 	$userId = strip_tags(stripslashes($_POST["wmms_user"]));
 	$rfidId = strip_tags(stripslashes($_POST["wmms_user_rfid"]));
 	$paidThrough = strip_tags(stripslashes($_POST["wmms_user_paid_through"]));
@@ -24,6 +31,13 @@ if(isset($_POST["edit_user"])) {
 			$wmmsUser->removeTextRole($roleName);
 		}
 	}
+	echo "User $userId updated.";
 }
 
+function displayUserData() {
+	$allUsers = getAllUsers();
+	foreach($allUsers as $user) {
+		echo "<table><tr><td>&nbsp;</td><td><b>Name</b></td><td>"
+	}
+}
 ?>
