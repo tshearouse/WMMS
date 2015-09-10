@@ -59,6 +59,14 @@ class WmmsMember {
         }
     }
     
+    function getWordpressUserData() {
+    	$userInfo = get_userdata($this->UserId);
+    	if(!$userInfo) {
+    		die("User not found.");
+    	}
+    	return $userInfo;
+    }
+    
     private function populateFromDb($userId) {
         require_once('roles.php');
         if(!CheckIfUserIdMatches($userId)) {

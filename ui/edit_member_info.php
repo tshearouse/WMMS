@@ -4,11 +4,8 @@ require_once '../business_layer/members.php';
 AdminOrBoardRightsOrDie();
 
 $userId = strip_tags(stripslashes($_GET["wmms_user"]));
-$userInfo = get_userdata($userId);
-if(!$userInfo) {
-	die("User not found.");
-} 
 $wmmsUser = new WmmsMember($userId);
+$userInfo = $wmmsUser->getWordpressUserData();
 echo "<h3>" . $userInfo->first_name . " " . $userInfo->last_name . "</h3><p>&nbsp;</p><br />";
 echo "<p><b>Email:</b> " . $userInfo->user_email . "</p>";
 echo "<form method='POST' target='manage_members.php'>";

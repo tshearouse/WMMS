@@ -36,8 +36,20 @@ function processUserInfoEditForm() {
 
 function displayUserData() {
 	$allUsers = getAllUsers();
+	echo "<table><tr><td>&nbsp;</td><td><b>Name</b></td><td>Paid Through</td><td>RFID Key</td></tr>";
 	foreach($allUsers as $user) {
-		echo "<table><tr><td>&nbsp;</td><td><b>Name</b></td><td>"
+		echo "<tr>";
+		$userId = $user->UserId;
+		echo "<td><a href='edit_member_info.php?wmms_user=$userId'>Edit</a></td>";
+		$wpInfo = $user->getWordpressUserData();
+		$prettyPrintName = $wpInfo->first_name . " " . $wpInfo->last_name;
+		echo "<td>$prettyPrintName</td>";
+		$paidThrough = $user->PaidThroughDate;
+		echo "<td>$paidThrough</td>";
+		$rfidKey = $user->RfidTag;
+		echo "<td>$rfidKey</td>";
+		echo "</tr>";
 	}
+	echo "</table>";
 }
 ?>
