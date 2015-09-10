@@ -24,7 +24,7 @@ function processUserInfoEditForm() {
 	foreach ($selectedRoles as $selectedRole) {
 		$cleanSelectedRoles[] = strip_tags(stripslashes($selectedRole));
 	}
-	foreach($allRoles as $availableRole) {
+	foreach($allRoles as $availableRole) {  
 		if(in_array($availableRole, $cleanSelectedRoles)) {
 			$wmmsUser->addTextRole($roleName);
 		} else {
@@ -42,7 +42,7 @@ function displayUserData() {
 		$userId = $user->UserId;
 		echo "<td><a href='edit_member_info.php?wmms_user=$userId'>Edit</a></td>";
 		$wpInfo = $user->getWordpressUserData();
-		$prettyPrintName = $wpInfo->first_name . " " . $wpInfo->last_name;
+		$prettyPrintName = $wpInfo->last_name . ", " . $wpInfo->first_name;
 		echo "<td>$prettyPrintName</td>";
 		$paidThrough = $user->PaidThroughDate;
 		echo "<td>$paidThrough</td>";
