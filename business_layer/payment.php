@@ -19,6 +19,7 @@ class WmmsPayment {
 	}
 	
 	function saveToDb() {
+		//Is this a good time to update the member's paid_through value?
 		require_once('../db/transaction.php');
 		db_AddTransaction($this->UserId, $this->TransactionId, $this->Date, $this->PaymentType, $this->TaggedFor);
 	}
