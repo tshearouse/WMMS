@@ -8,6 +8,8 @@ function db_CreatePaymentItemsTableIfNotExists() {
 		$sql = "CREATE TABLE $table_name("
 		. " itemName VARCHAR(255) NOT NULL"
 		. " itemPrice DECIMAL(6, 2) NOT NULL"
+		. " isFixedPrice BIT"
+		. " itemType INT NOT NULL"
 		. " id INT NOT NULL AUTO_INCREMENT"
 		. " PRIMARY KEY ( id ));";
 		require_once(ABSPATH . "wp_admin/includes/upgrade.php");

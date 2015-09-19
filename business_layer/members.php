@@ -21,6 +21,7 @@ function mapUsers($users) {
 	foreach($users as $user) {
 		$wmmsMembers[] = new WmmsMember($user["user"], $user["paid_through"], $user["rfid_tag"]);
 	}
+	return $wmmsMembers;
 }
 
 class WmmsMember {
