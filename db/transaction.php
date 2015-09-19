@@ -20,6 +20,7 @@ function db_CreateTransactionTableIfNotExists() {
 }
 
 function db_AddTransaction($userId, $transactionId, $date, $paymentType, $taggedFor) {
+	db_CreateTransactionTableIfNotExists();
 	global $wpdb;
 	$table_name = db_GetTransactionTableName();
 	$dbUser = strip_tags(addslashes($userId));

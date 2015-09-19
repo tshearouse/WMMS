@@ -13,4 +13,9 @@ function db_GetTransactionTableName() {
 	global $wpdb;
 	return $wpdb->prefix . "wmms_transactions";
 }
+
+function db_GetPaymentItemsTableName() {
+	global $wpdb;
+	return $wpdb->prefix . "wmms_payment_items";
+}
 ?>
