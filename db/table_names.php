@@ -18,4 +18,9 @@ function db_GetPaymentItemsTableName() {
 	global $wpdb;
 	return $wpdb->prefix . "wmms_payment_items";
 }
+
+function db_GetPriceOverrideTableName() {
+	global $wpdb;
+	return $wpdb->prefix . "wmms_price_override";
+}
 ?>
