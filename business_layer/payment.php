@@ -48,6 +48,7 @@ class WmmsPriceOverride {
 	var $ItemId;
 	var $ItemPrice;
 	var $GoodThrough;
+	var $ItemName;
 	
 	//__construct($ItemId, $ItemPrice, $GoodThrough);
 	function __construct() {
@@ -79,11 +80,18 @@ function GetAllPaymentItems() {
 function GetPriceOverrides() {
 	require_once('../db/price_override.php');
 	$currentUserId = wp_get_current_user_id();
+	$allPaymentItems = GetAllPaymentItems();
 	
 	$dbOverrides = db_GetAllPriceOverridesForUser($currentUserId);
 	$overrides = array();
 	foreach($dbOverrides as $override) {
-		$overrides = new WmmsPriceOverride($override['itemId'], $override['itemPrice'], $override['goodThrough']);
+		$priceOverride = new WmmsPriceOverride($override['itemId'], $override['itemPrice'], $override['goodThrough']);
+		foreach($allPaymentItems as $paymentItem) {
+			if($paymentItem->DbId == $priceOverride->ItemId) {
+				$priceOverride->ItemName = $paymentItem->ItemName;
+			}
+		}
+		$overrides = $priceOverride;
 	}
 	return $overrides;
 }

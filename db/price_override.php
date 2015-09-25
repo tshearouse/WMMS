@@ -21,6 +21,7 @@ function db_GetAllPriceOverridesForUser($userId) {
 	db_CreatePriceOverrideTableIfNotExists();
 	global $wpdb;
 	$table_name = db_GetPriceOverrideTableName();
+	
 	$sql = "SELECT * FROM $table_name WHERE userId = '$userId' AND goodThrough >= CURDATE()";
 	return $wpdb->get_results($sql, ARRAY_A);
 }
