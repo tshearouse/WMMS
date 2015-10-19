@@ -56,8 +56,9 @@ class WmmsPaymentItem {
 	var $IsFixedPrice; //If false, then $ItemPrice is merely a suggested price in the UI
 	var $PaymentType;
 	var $DbId;
+	var $Active;
 	
-	//__construct($itemName, $itemPrice, $isFixedPrice, $paymentType, $itemId);
+	//__construct($itemName, $itemPrice, $isFixedPrice, $paymentType, $itemId, $active);
 	function __construct() {
 		$args = func_get_arg();
 		$this->ItemName = $args[0];
@@ -65,6 +66,7 @@ class WmmsPaymentItem {
 		$this->IsFixedPrice = $args[2] === 1;
 		$this->PaymentType = PaymentTypes::prettyPrint($args[3]);
 		$this->DbId = $args[4];
+		$this->Active = $args[5];
 	}
 }
 
@@ -90,7 +92,7 @@ function GetActivePaymentItems() {
 	$dbItems = db_GetActivePaymentItems();
 	$paymentItems = array();
 	foreach($dbItems as $paymentItem) {
-		$currentItem = new WmmsPaymentItem($paymentItem['itemName'], $paymentItem['itemPrice'], $paymentItem['isFixedPrice'], $paymentItem['itemType'], $paymentItem['id']);
+		$currentItem = new WmmsPaymentItem($paymentItem['itemName'], $paymentItem['itemPrice'], $paymentItem['isFixedPrice'], $paymentItem['itemType'], $paymentItem['id'], true);
 		foreach($overrides as $priceOverride) {
 			if($priceOverride->ItemId == $currentItem->DbId) {
 				$currentItem->ItemPrice = $priceOverride->ItemPrice;
@@ -99,6 +101,20 @@ function GetActivePaymentItems() {
 		$paymentItems = $currentItem;
 	}
 	return $paymentItems;
+}
+
+function GetAllPaymentItems() { 
+	//All means all, including non-active items. Also, no payment overrides are applied.
+	require_once('../db/payment_items.php');
+	
+	$dbItems = db_GetAllPaymentItems();
+	$paymentItems = array();
+	foreach($dbItems as $paymentItem) {
+		$currentItem = new WmmsPaymentItem($paymentItem['itemName'], $paymentItem['itemPrice'], $paymentItem['isFixedPrice'], $paymentItem['itemType'], $paymentItem['id'], $paymentItem['active']);
+		
+		$paymentItems = $currentItem;
+	}
+	return $paymentItems;	
 }
 
 function GetPriceOverrides() {
