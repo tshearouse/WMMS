@@ -6,5 +6,5 @@ $formTarget = "manage_members.php";
 $enableEdit = TRUE;
 
 displayInfoForUser($formTarget, $enableEdit);
-//TODO: Need a UI to add/edit price overrides
+
 ?>

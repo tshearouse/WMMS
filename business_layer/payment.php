@@ -5,7 +5,7 @@ class WmmsPayment {
 	var $UserId;
 	var $TransactionId;
 	var $Date;
-	var $PaymentType;
+	var $PaymentItemId;
 	var $TaggedFor;
 	
 	//__construct($userId, $transactionId, $date, $paymentType, $taggedFor);
@@ -14,14 +14,38 @@ class WmmsPayment {
 		$this->UserId = $args[0];
 		$this->TransactionId = $args[1];
 		$this->Date = $args[2];
-		$this->PaymentType = $args[3];
+		$this->PaymentItemId = $args[3];
 		$this->TaggedFor = $args[4];
 	}
 	
 	function saveToDb() {
-		//Is this a good time to update the member's paid_through value?
+		require_once('../db/payment_items.php');
+		require_once('payment_types.php');
+		$paymentItem = db_GetPaymentItemById($this->PaymentItemId);
+		UpdatePaidThroughDateForUser($this->UserId, $paymentItem['itemType']);
+		
 		require_once('../db/transaction.php');
-		db_AddTransaction($this->UserId, $this->TransactionId, $this->Date, $this->PaymentType, $this->TaggedFor);
+		db_AddTransaction($this->UserId, $this->TransactionId, $this->Date, $this->PaymentItemId, $this->TaggedFor);
+	}
+	
+	function UpdatePaidThroughDateForUser($userId, $itemType) {
+		if($itemId != PaymentTypes::MembershipMonthly && $itemId != PaymentTypes::MembershipYearly) {
+			return;
+		}
+		$memberData = new WmmsMember($userId);
+		$date = date("Y-m-d");
+		
+		if($date > $memberData->PaidThroughDate) { //If membership had lapsed or not started, begin from today.
+			$memberData->PaidThroughDate = $date;
+		}
+		if($itemType == PaymentTypes::MembershipMonthly) {
+			$date = date_add($memberData->PaidThroughDate, date_interval_create_from_date_string("1 month"));
+		}
+		if($itemType == PaymentTypes::MembershipYearly) {
+			$date = date_add($memberData->PaidThroughDate, date_interval_create_from_date_string("1 year"));
+		}
+		$memberData->PaidThroughDate = $date;
+		$memberData->saveToDb();
 	}
 }
 
@@ -29,7 +53,7 @@ class WmmsPaymentItem {
 	
 	var $ItemName;
 	var $ItemPrice;
-	var $IsFixedPrice; //If true, then $ItemPrice is merely a suggested price in the UI
+	var $IsFixedPrice; //If false, then $ItemPrice is merely a suggested price in the UI
 	var $PaymentType;
 	var $DbId;
 	
@@ -59,11 +83,11 @@ class WmmsPriceOverride {
 	}
 }
 
-function GetAllPaymentItems() {
+function GetActivePaymentItems() {
 	require_once('../db/payment_items.php');
 	$overrides = GetPriceOverrides();
 	
-	$dbItems = db_GetAllPaymentItems();
+	$dbItems = db_GetActivePaymentItems();
 	$paymentItems = array();
 	foreach($dbItems as $paymentItem) {
 		$currentItem = new WmmsPaymentItem($paymentItem['itemName'], $paymentItem['itemPrice'], $paymentItem['isFixedPrice'], $paymentItem['itemType'], $paymentItem['id']);
@@ -80,15 +104,15 @@ function GetAllPaymentItems() {
 function GetPriceOverrides() {
 	require_once('../db/price_override.php');
 	$currentUserId = wp_get_current_user_id();
-	$allPaymentItems = GetAllPaymentItems();
+	$allPaymentItems = db_GetActivePaymentItems();
 	
 	$dbOverrides = db_GetAllPriceOverridesForUser($currentUserId);
 	$overrides = array();
 	foreach($dbOverrides as $override) {
 		$priceOverride = new WmmsPriceOverride($override['itemId'], $override['itemPrice'], $override['goodThrough']);
 		foreach($allPaymentItems as $paymentItem) {
-			if($paymentItem->DbId == $priceOverride->ItemId) {
-				$priceOverride->ItemName = $paymentItem->ItemName;
+			if($paymentItem['DbId'] == $priceOverride->ItemId) {
+				$priceOverride->ItemName = $paymentItem['itemName'];
 			}
 		}
 		$overrides = $priceOverride;

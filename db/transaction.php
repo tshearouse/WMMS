@@ -9,7 +9,7 @@ function db_CreateTransactionTableIfNotExists() {
 				. " user VARCHAR(60) NOT NULL"
 				. " txnId VARCHAR(255) NOT NULL"
 				. " date DATE"
-				. " paymentType INT"
+				. " paymentItemId INT"
 				. " taggedFor VARCHAR(255)"
 				. " id INT NOT NULL AUTO_INCREMENT"
 				. " PRIMARY KEY ( id ));";
@@ -19,7 +19,7 @@ function db_CreateTransactionTableIfNotExists() {
 	}
 }
 
-function db_AddTransaction($userId, $transactionId, $date, $paymentType, $taggedFor) {
+function db_AddTransaction($userId, $transactionId, $date, $paymentItemId, $taggedFor) {
 	db_CreateTransactionTableIfNotExists();
 	global $wpdb;
 	$table_name = db_GetTransactionTableName();
@@ -27,7 +27,7 @@ function db_AddTransaction($userId, $transactionId, $date, $paymentType, $tagged
 	$dbTxnId = strip_tags(addslashes($transactionId));
 	$dbTag = strip_tags(addslashes($taggedFor));
 	
-	$wpdb->insert($table_name, array('user' => $dbUser, 'txnId' => $dbTxnId, 'date' => $date, 'paymentType' => $paymentType, 'taggedFor' => $dbTag));
+	$wpdb->insert($table_name, array('user' => $dbUser, 'txnId' => $dbTxnId, 'date' => $date, 'paymentItemId' => $paymentItemId, 'taggedFor' => $dbTag));
 }
 
 ?>

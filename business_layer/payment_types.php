@@ -1,8 +1,9 @@
 <?php
 abstract class PaymentTypes {
 	const Unknown = 0;
-	const Membership = 1;
-	const Donation = 2;
+	const MembershipYearly = 1;
+	const MembershipMonthly = 2;
+	const Donation = 3;
 	
 	private static $enumValues = NULL;
 	

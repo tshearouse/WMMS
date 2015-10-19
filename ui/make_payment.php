@@ -7,7 +7,12 @@ $enableEdit = FALSE;
 displayInfoForUser($formTarget, $enableEdit);
 
 require_once('../business_layer/payment.php');
-$paymentItems = GetAllPaymentItems();
+$paymentItems = GetActivePaymentItems();
 foreach($paymentItems as $paymentItem) {
-	//TODO: Display radio selection
+// 	var $ItemName;
+// 	var $ItemPrice;
+// 	var $IsFixedPrice; //If false, then $ItemPrice is merely a suggested price in the UI
+// 	var $PaymentType;
+// 	var $DbId;
+	
 }
