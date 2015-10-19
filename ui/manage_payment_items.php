@@ -9,6 +9,10 @@ if(isset($_POST["edit_item"])) {
 }
 printAllPaymentItems();
 
+function processPaymentItemFromEditForm() {
+	//TODO: Add form handler
+}
+
 function printAllPaymentItems() {
 	echo ("<table><tr><td>&nbsp;</td><td><b>Active</b></td><td><b>Fixed Price?</b></td><td><b>Price</b></td><td>Description</td><td><b>Item Type<b></td></tr>");
 	$newPaymentItem = new WmmsPaymentItem("New", 0, true, PaymentTypes::Unknown, -1, false);

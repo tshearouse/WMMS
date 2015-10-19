@@ -58,15 +58,31 @@ class WmmsPaymentItem {
 	var $DbId;
 	var $Active;
 	
+	//__construct($dbId);
 	//__construct($itemName, $itemPrice, $isFixedPrice, $paymentType, $itemId, $active);
 	function __construct() {
+		$numberOfArgs = func_num_args();
 		$args = func_get_arg();
-		$this->ItemName = $args[0];
-		$this->ItemPrice = $args[1];
-		$this->IsFixedPrice = $args[2] === 1;
-		$this->PaymentType = PaymentTypes::prettyPrint($args[3]);
-		$this->DbId = $args[4];
-		$this->Active = $args[5];
+		if($numberOfArgs > 1) {
+			$this->ItemName = $args[0];
+			$this->ItemPrice = $args[1];
+			$this->IsFixedPrice = $args[2] === 1;
+			$this->PaymentType = PaymentTypes::prettyPrint($args[3]);
+			$this->DbId = $args[4];
+			$this->Active = $args[5];
+		} else {
+			$this->DbId = $args[0];
+			populateFromDatabase();
+		}
+	}
+	
+	private function populateFromDatabase() {
+		$dbItem = db_GetPaymentItemById($this->DbId);
+		$this->ItemName = $dbItem['itemName'];
+		$this->ItemPrice = $dbItem['itemPrice'];
+		$this->IsFixedPrice = $dbItem['isFixedPrice'];
+		$this->PaymentType = $dbItem['itemType'];
+		$this->Active = $dbItem['active'];
 	}
 }
 
