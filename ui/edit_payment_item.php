@@ -11,7 +11,7 @@ if($itemId >= 0) {
 }
 
 echo ("<form method='POST' target='manage_payment_items.php'>");
-echo ("<input type='hidden' name='wmms_payment_item_id' />");
+echo ("<input type='hidden' name='wmms_payment_item_id' value='$itemId' />");
 $checked = "";
 if($item->Active){
 	$checked = "checked='true' ";
@@ -27,6 +27,11 @@ echo ("<p>Price $<input type='text' name='wmms_payment_item_price' value='$price
 $description = $item->ItemName;
 echo ("<p>Description <input type='text' name='wmms_payment_item_description' value='$description' /></p>");
 
-//TODO: Add dropdown containing the item types
+echo ("<p>Item Type <select name='wmms_payment_item_type' >");
+$paymentTypes = PaymentTypes::listAllPrettyPrintRoles();
+foreach($paymentTypes as $paymentType) {
+	echo ("<option value='$paymentType'>$paymentType</option>");
+}
+echo ("</select></p>");
 
 echo ("<p><input type='submit' value='Save Changes' /></p></form>");

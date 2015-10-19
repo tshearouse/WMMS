@@ -84,6 +84,10 @@ class WmmsPaymentItem {
 		$this->PaymentType = $dbItem['itemType'];
 		$this->Active = $dbItem['active'];
 	}
+	
+	function saveToDb() {
+		//TODO: This.
+	}
 }
 
 class WmmsPriceOverride {

@@ -4,13 +4,20 @@ require_once("../business_layer/payment_types.php");
 require_once("../business_layer/roles.php");
 AdminOrBoardRightsOrDie();
 
-if(isset($_POST["edit_item"])) {
+if(isset($_POST["wmms_payment_item_id"])) {
 	processPaymentItemFromEditForm();
 }
 printAllPaymentItems();
 
 function processPaymentItemFromEditForm() {
-	//TODO: Add form handler
+	$itemId = intval($_POST['wmms_payment_item_id']);
+	$active = isset($_POST['wmms_payment_item_active']);
+	$fixedPrice = isset($_POST['wmms_payment_item_fixed']);
+	$price = strip_tags(addslashes($_POST['wmms_payment_item_price']));
+	$name = strip_tags(addslashes($_POST['wmms_payment_item_description']));
+	$type = PaymentTypes::parseFromString(strip_tags(addslashes($_POST['wmms_payment_item_type'])));
+	
+	$paymentItem = new WmmsPaymentItem($name, $price, $fixed, $type, $itemId, $active);
 }
 
 function printAllPaymentItems() {

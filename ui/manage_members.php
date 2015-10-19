@@ -20,7 +20,7 @@ function processUserInfoEditForm() {
 	
 	$allRoles = UserRoles::listAllPrettyPrintRoles();
 	$selectedRoles = $_POST["wmms_user_roles"];
-	$cleanSelectedRoles = arrray();
+	$cleanSelectedRoles = array();
 	foreach ($selectedRoles as $selectedRole) {
 		$cleanSelectedRoles[] = strip_tags(stripslashes($selectedRole));
 	}
