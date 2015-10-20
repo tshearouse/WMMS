@@ -18,6 +18,7 @@ function processPaymentItemFromEditForm() {
 	$type = PaymentTypes::parseFromString(strip_tags(addslashes($_POST['wmms_payment_item_type'])));
 	
 	$paymentItem = new WmmsPaymentItem($name, $price, $fixed, $type, $itemId, $active);
+	$paymentItem->saveToDb();
 }
 
 function printAllPaymentItems() {

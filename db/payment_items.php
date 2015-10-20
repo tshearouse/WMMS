@@ -43,3 +43,23 @@ function db_GetPaymentItemById($itemId) {
 	$sql = "SELECT * FROM $table_name WHERE id = $dbItemId";
 	return $wpdb->get_results($sql, ARRAY_A);
 }
+
+function db_InsertOrUpdatePaymentItem($paymentItem) {
+	db_CreatePaymentItemsTableIfNotExists();
+	$tableName = db_GetPaymentItemsTableName();
+	global $wpdb;
+	$dbItemId = intval($paymentItem->DbId);
+	$dbItemName = add_tags(stripslashes($paymentItem->ItemName));
+	$dbItemPrice = floatval($paymentItem->ItemPrice);
+	$dbIsFixed = $paymentItem->IsFixedPrice === true;
+	$dbIsActive = $paymentItem->Active === true;
+	$dbPaymentType = intval($paymentItem->PaymentType);
+	$item = db_GetPaymentItemById($dbItemId);
+	if($dbItemId < 0 || $item == null) {
+		$wpdb->insert($tableName, array('itemName' => $dbItemName, 'itemPrice' => $dbItemPrice, 'isFixedPrice' => $dbIsFixed, 'active' => $dbIsActive, 'itemType' => $dbPaymentType));
+	} else {
+		$wpdb->update($tableName, 
+				array('itemName' => $dbItemName, 'itemPrice' => $dbItemPrice, 'isFixedPrice' => $dbIsFixed, 'active' => $dbIsActive, 'itemType' => $dbPaymentType),
+				array('id' => $dbItemId));
+	}
+}

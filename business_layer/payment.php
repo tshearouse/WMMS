@@ -86,7 +86,7 @@ class WmmsPaymentItem {
 	}
 	
 	function saveToDb() {
-		//TODO: This.
+		db_InsertOrUpdatePaymentItem($this);
 	}
 }
 
