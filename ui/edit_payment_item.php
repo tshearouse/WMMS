@@ -3,6 +3,7 @@ require_once '../business_layer/roles.php';
 AdminOrBoardRightsOrDie();
 require_once '../business_layer/payment.php';
 require_once '../business_layer/payment_types.php';
+require_once '../business_layer/payment_items.php';
 
 $item = new WmmsPaymentItem("New", 0, true, PaymentTypes::Unknown, -1, false);
 $itemId = intval($_GET['wmms_item']);

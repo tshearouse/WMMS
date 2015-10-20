@@ -1,5 +1,6 @@
 <?php
 require_once('../business_layer/payment.php');
+require_once('../business_layer/payment_items.php');
 
 if(isset($_GET['wmms_item'])) {
 	$itemId = intval($_GET['wmms_item']);

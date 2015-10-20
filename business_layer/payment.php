@@ -20,6 +20,7 @@ class WmmsPayment {
 	
 	function saveToDb() {
 		require_once('../db/payment_items.php');
+		require_once('payment_items.php');
 		require_once('payment_types.php');
 		$paymentItem = db_GetPaymentItemById($this->PaymentItemId);
 		UpdatePaidThroughDateForUser($this->UserId, $paymentItem['itemType']);
@@ -28,7 +29,7 @@ class WmmsPayment {
 		db_AddTransaction($this->UserId, $this->TransactionId, $this->Date, $this->PaymentItemId, $this->TaggedFor);
 	}
 	
-	function UpdatePaidThroughDateForUser($userId, $itemType) {
+	private function UpdatePaidThroughDateForUser($userId, $itemType) {
 		if($itemId != PaymentTypes::MembershipMonthly && $itemId != PaymentTypes::MembershipYearly) {
 			return;
 		}
@@ -49,54 +50,6 @@ class WmmsPayment {
 	}
 }
 
-class WmmsPaymentItem {
-	
-	var $ItemName;
-	var $Description;
-	var $ItemPrice;
-	var $IsFixedPrice; //If false, then $ItemPrice is merely a suggested price in the UI
-	var $PaymentType;
-	var $DbId;
-	var $Active;
-	
-	//__construct($dbId);
-	//__construct($itemName, $description, $itemPrice, $isFixedPrice, $paymentType, $itemId, $active);
-	function __construct() {
-		$numberOfArgs = func_num_args();
-		$args = func_get_arg();
-		if($numberOfArgs > 1) {
-			$this->ItemName = $args[0];
-			$this->Description = $args[1];
-			$this->ItemPrice = $args[2];
-			$this->IsFixedPrice = $args[3] === 1;
-			$this->PaymentType = PaymentTypes::prettyPrint($args[4]);
-			$this->DbId = $args[5];
-			$this->Active = $args[6];
-		} else {
-			$this->DbId = $args[0];
-			populateFromDatabase();
-		}
-	}
-	
-	private function populateFromDatabase() {
-		$dbItem = db_GetPaymentItemById($this->DbId);
-		$this->ItemName = $dbItem['itemName'];
-		$this->ItemPrice = $dbItem['itemPrice'];
-		$this->IsFixedPrice = $dbItem['isFixedPrice'];
-		$this->PaymentType = $dbItem['itemType'];
-		$this->Active = $dbItem['active'];
-		$this->Description = $dbItem['description'];
-		
-		$priceOverride = db_GetPriceOverrideForUser(wp_get_current_user_id(), $this->DbId);
-		if($priceOverride != null) {
-			$this->ItemPrice = $priceOverride->ItemPrice;
-		}
-	}
-	
-	function saveToDb() {
-		db_InsertOrUpdatePaymentItem($this);
-	}
-}
 
 class WmmsPriceOverride {
 	var $ItemId;
@@ -121,38 +74,6 @@ class WmmsPriceOverride {
 		require_once '../db/price_override.php';
 		db_InsertOrUpdatePriceOverride($this);
 	}
-}
-
-function GetActivePaymentItems() {
-	require_once('../db/payment_items.php');
-	$overrides = GetPriceOverrides();
-	
-	$dbItems = db_GetActivePaymentItems();
-	$paymentItems = array();
-	foreach($dbItems as $paymentItem) {
-		$currentItem = new WmmsPaymentItem($paymentItem['itemName'], $paymentItem['itemPrice'], $paymentItem['isFixedPrice'], $paymentItem['itemType'], $paymentItem['id'], true);
-		foreach($overrides as $priceOverride) {
-			if($priceOverride->ItemId == $currentItem->DbId) {
-				$currentItem->ItemPrice = $priceOverride->ItemPrice;
-			}
-		}
-		$paymentItems = $currentItem;
-	}
-	return $paymentItems;
-}
-
-function GetAllPaymentItems() { 
-	//All means all, including non-active items. Also, no payment overrides are applied.
-	require_once('../db/payment_items.php');
-	
-	$dbItems = db_GetAllPaymentItems();
-	$paymentItems = array();
-	foreach($dbItems as $paymentItem) {
-		$currentItem = new WmmsPaymentItem($paymentItem['itemName'], $paymentItem['itemPrice'], $paymentItem['isFixedPrice'], $paymentItem['itemType'], $paymentItem['id'], $paymentItem['active']);
-		
-		$paymentItems = $currentItem;
-	}
-	return $paymentItems;	
 }
 
 function GetPriceOverrides() {
