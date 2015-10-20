@@ -2,6 +2,7 @@
 require_once("../business_layer/payment.php");
 require_once("../business_layer/payment_types.php");
 require_once("../business_layer/roles.php");
+require_once '../business_layer/formatting.php';
 AdminOrBoardRightsOrDie();
 
 if(isset($_POST["wmms_payment_item_id"])) {
@@ -60,11 +61,4 @@ function printPaymentItem($paymentItem) {
 	$type = PaymentTypes::prettyPrint($paymentItem->$ItemPrice);
 	echo ("<td>$type</td>");
 	echo ("</tr>");
-}
-
-function prettyPrintPrice($price) {
-	setlocale(LC_MONETARY, 'en_US');
-	$prettyPrice = money_format("%i", $price);
-	
-	return $prettyPrice;
 }

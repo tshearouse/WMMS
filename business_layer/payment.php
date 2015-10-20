@@ -86,6 +86,11 @@ class WmmsPaymentItem {
 		$this->PaymentType = $dbItem['itemType'];
 		$this->Active = $dbItem['active'];
 		$this->Description = $dbItem['description'];
+		
+		$priceOverride = db_GetPriceOverrideForUser(wp_get_current_user_id(), $this->DbId);
+		if($priceOverride != null) {
+			$this->ItemPrice = $priceOverride->ItemPrice;
+		}
 	}
 	
 	function saveToDb() {
