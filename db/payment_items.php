@@ -7,6 +7,7 @@ function db_CreatePaymentItemsTableIfNotExists() {
 	if($wpdb->get_var("show tables like $table_name") != $table_name) {
 		$sql = "CREATE TABLE $table_name("
 		. " itemName VARCHAR(255) NOT NULL"
+		. " description VARCHAR(255)"
 		. " itemPrice DECIMAL(6, 2) NOT NULL"
 		. " isFixedPrice BIT"
 		. " active BIT"
@@ -50,16 +51,17 @@ function db_InsertOrUpdatePaymentItem($paymentItem) {
 	global $wpdb;
 	$dbItemId = intval($paymentItem->DbId);
 	$dbItemName = add_tags(stripslashes($paymentItem->ItemName));
+	$dbDescription = add_tags(stripslashes($paymentItem->Description));
 	$dbItemPrice = floatval($paymentItem->ItemPrice);
 	$dbIsFixed = $paymentItem->IsFixedPrice === true;
 	$dbIsActive = $paymentItem->Active === true;
 	$dbPaymentType = intval($paymentItem->PaymentType);
 	$item = db_GetPaymentItemById($dbItemId);
 	if($dbItemId < 0 || $item == null) {
-		$wpdb->insert($tableName, array('itemName' => $dbItemName, 'itemPrice' => $dbItemPrice, 'isFixedPrice' => $dbIsFixed, 'active' => $dbIsActive, 'itemType' => $dbPaymentType));
+		$wpdb->insert($tableName, array('itemName' => $dbItemName, 'description' => $dbDescription, 'itemPrice' => $dbItemPrice, 'isFixedPrice' => $dbIsFixed, 'active' => $dbIsActive, 'itemType' => $dbPaymentType));
 	} else {
 		$wpdb->update($tableName, 
-				array('itemName' => $dbItemName, 'itemPrice' => $dbItemPrice, 'isFixedPrice' => $dbIsFixed, 'active' => $dbIsActive, 'itemType' => $dbPaymentType),
+				array('itemName' => $dbItemName, 'description' => $dbDescription, 'itemPrice' => $dbItemPrice, 'isFixedPrice' => $dbIsFixed, 'active' => $dbIsActive, 'itemType' => $dbPaymentType),
 				array('id' => $dbItemId));
 	}
 }

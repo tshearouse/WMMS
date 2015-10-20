@@ -52,6 +52,7 @@ class WmmsPayment {
 class WmmsPaymentItem {
 	
 	var $ItemName;
+	var $Description;
 	var $ItemPrice;
 	var $IsFixedPrice; //If false, then $ItemPrice is merely a suggested price in the UI
 	var $PaymentType;
@@ -59,17 +60,18 @@ class WmmsPaymentItem {
 	var $Active;
 	
 	//__construct($dbId);
-	//__construct($itemName, $itemPrice, $isFixedPrice, $paymentType, $itemId, $active);
+	//__construct($itemName, $description, $itemPrice, $isFixedPrice, $paymentType, $itemId, $active);
 	function __construct() {
 		$numberOfArgs = func_num_args();
 		$args = func_get_arg();
 		if($numberOfArgs > 1) {
 			$this->ItemName = $args[0];
-			$this->ItemPrice = $args[1];
-			$this->IsFixedPrice = $args[2] === 1;
-			$this->PaymentType = PaymentTypes::prettyPrint($args[3]);
-			$this->DbId = $args[4];
-			$this->Active = $args[5];
+			$this->Description = $args[1];
+			$this->ItemPrice = $args[2];
+			$this->IsFixedPrice = $args[3] === 1;
+			$this->PaymentType = PaymentTypes::prettyPrint($args[4]);
+			$this->DbId = $args[5];
+			$this->Active = $args[6];
 		} else {
 			$this->DbId = $args[0];
 			populateFromDatabase();
@@ -83,6 +85,7 @@ class WmmsPaymentItem {
 		$this->IsFixedPrice = $dbItem['isFixedPrice'];
 		$this->PaymentType = $dbItem['itemType'];
 		$this->Active = $dbItem['active'];
+		$this->Description = $dbItem['description'];
 	}
 	
 	function saveToDb() {
