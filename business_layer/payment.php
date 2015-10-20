@@ -98,13 +98,23 @@ class WmmsPriceOverride {
 	var $ItemPrice;
 	var $GoodThrough;
 	var $ItemName;
+	var $UserId;
 	
-	//__construct($ItemId, $ItemPrice, $GoodThrough);
+	//__construct($ItemId, $ItemPrice, $GoodThrough, $UserId);
 	function __construct() {
 		$args = func_get_arg();
 		$this->ItemId = $args[0];
 		$this->ItemPrice = $args[1];
 		$this->GoodThrough = $args[2];
+		$this->UserId = $args[3];
+	}
+	
+	function saveToDb() {
+		require_once 'roles.php';
+		AdminOrBoardRightsOrDie();
+
+		require_once '../db/price_override.php';
+		db_InsertOrUpdatePriceOverride($this);
 	}
 }
 
@@ -148,7 +158,7 @@ function GetPriceOverrides() {
 	$dbOverrides = db_GetAllPriceOverridesForUser($currentUserId);
 	$overrides = array();
 	foreach($dbOverrides as $override) {
-		$priceOverride = new WmmsPriceOverride($override['itemId'], $override['itemPrice'], $override['goodThrough']);
+		$priceOverride = new WmmsPriceOverride($override['itemId'], $override['itemPrice'], $override['goodThrough'], $currentUserId);
 		foreach($allPaymentItems as $paymentItem) {
 			if($paymentItem['DbId'] == $priceOverride->ItemId) {
 				$priceOverride->ItemName = $paymentItem['itemName'];

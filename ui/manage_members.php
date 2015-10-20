@@ -31,7 +31,14 @@ function processUserInfoEditForm() {
 			$wmmsUser->removeTextRole($roleName);
 		}
 	}
-	//TODO: Add handler for price override data
+	if(isset($_POST['wmms_price_override_price'])) {
+		$price = floatval($_POST['wmms_price_override_price']);
+		$item = intval($_POST['wmms_price_override_item']);
+		$validThrough = strip_tags(addslashes($_POST['wmms_price_override_date']));
+		$priceOverride = new WmmsPriceOverride($item, $price, $validThrough, $userId);
+		$priceOverride->saveToDb();
+	}
+
 	echo "User $userId updated.";
 }
 

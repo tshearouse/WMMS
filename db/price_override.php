@@ -22,6 +22,27 @@ function db_GetAllPriceOverridesForUser($userId) {
 	global $wpdb;
 	$table_name = db_GetPriceOverrideTableName();
 	
-	$sql = "SELECT * FROM $table_name WHERE userId = '$userId' AND goodThrough >= CURDATE()";
+	$dbUser = strip_tags(addslashes($userId));
+	$sql = "SELECT * FROM $table_name WHERE userId = '$dbUser' AND goodThrough >= CURDATE()";
 	return $wpdb->get_results($sql, ARRAY_A);
+}
+
+function db_InsertOrUpdatePriceOverride($priceOverride) {
+	db_CreatePriceOverrideTableIfNotExists();
+	global $wpdb;
+	$table_name - db_GetPriceOverrideTableName();
+	$dbUser = strip_tags(addslashes($priceOverride->UserId));
+	$dbItemId = intval($priceOverride->ItemId);
+	$dbItemPrice = floatval($priceOverride->ItemPrice);
+	$dbGoodThrough = strip_tags(addslashes($priceOverride->GoodThrough));
+	
+	$sql = "SELECT * FROM $table_name WHERE userId = '$dbUser' AND itemId = $dbItemId";
+	$result = $wpdb->get_row($sql);
+	if($result != null) {
+		$wpdb->update($table_name,
+				array('itemPrice' => $dbItemPrice, 'goodThrough' => $dbGoodThrough),
+				array('userId' => $dbUser, 'itemId' => $dbItemId));
+	} else {
+		$wpdb->insert($table_name, array('itemPrice' => $dbItemPrice, 'goodThrough' => $dbGoodThrough, 'userId' => $dbUser, 'itemId' => $dbItemId));
+	}
 }
