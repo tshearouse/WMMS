@@ -31,6 +31,7 @@ function processUserInfoEditForm() {
 			$wmmsUser->removeTextRole($roleName);
 		}
 	}
+	//TODO: Add handler for price override data
 	echo "User $userId updated.";
 }
 

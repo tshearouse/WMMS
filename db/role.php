@@ -26,7 +26,6 @@ function db_GetAllRolesForUser($user_id) {
 function db_AddRoleToUser($user_id, $new_role) {
 	global $wpdb;
     if(!db_CheckIfUserHasRole($user_id, $new_role)) {
-        db_CreateRoleTable();
         $role_table_name = db_GetRoleTableName();
         $user = strip_tags(addslashes($user_id));
         $role = intval($new_role);
@@ -38,7 +37,6 @@ function db_AddRoleToUser($user_id, $new_role) {
 function db_RemoveRoleFromUser($user_id, $role_id) {
 	global $wpdb;
     if(db_CheckIfUserHasRole($user_id, $role_id)) {
-        db_CreateRoleTable();
         $role_table_name = db_GetRoleTableName();
         $user = strip_tags(addslashes($user_id));
         $role = intval($role_id);
