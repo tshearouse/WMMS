@@ -13,11 +13,14 @@ function processPaymentItemFromEditForm() {
 	$itemId = intval($_POST['wmms_payment_item_id']);
 	$active = isset($_POST['wmms_payment_item_active']);
 	$fixedPrice = isset($_POST['wmms_payment_item_fixed']);
+	
 	$price = strip_tags(addslashes($_POST['wmms_payment_item_price']));
+	$prettyPrice = prettyPrintPrice($price);
+	
 	$name = strip_tags(addslashes($_POST['wmms_payment_item_description']));
 	$type = PaymentTypes::parseFromString(strip_tags(addslashes($_POST['wmms_payment_item_type'])));
 	
-	$paymentItem = new WmmsPaymentItem($name, $price, $fixed, $type, $itemId, $active);
+	$paymentItem = new WmmsPaymentItem($name, $prettyPrice, $fixed, $type, $itemId, $active);
 	$paymentItem->saveToDb();
 }
 
@@ -57,4 +60,11 @@ function printPaymentItem($paymentItem) {
 	$type = PaymentTypes::prettyPrint($paymentItem->$ItemPrice);
 	echo ("<td>$type</td>");
 	echo ("</tr>");
+}
+
+function prettyPrintPrice($price) {
+	setlocale(LC_MONETARY, 'en_US');
+	$prettyPrice = money_format("%i", $price);
+	
+	return $prettyPrice;
 }
