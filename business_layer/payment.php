@@ -76,6 +76,14 @@ class WmmsPriceOverride {
 	}
 }
 
+function sanitizePrice($price) {
+	$price = trim(addslashes($price), "$, \t\n\r\0\x0B");
+	$decPrice = floatval($price);
+	if($decPrice <= 0.01)
+		die("Really? Did you honestly think a payment of $price would clear?");
+	return round($decPrice, 2);
+}
+
 function GetPriceOverrides() {
 	require_once('../db/price_override.php');
 	$currentUserId = wp_get_current_user_id();

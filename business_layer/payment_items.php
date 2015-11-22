@@ -8,9 +8,10 @@ class WmmsPaymentItem {
 	var $PaymentType;
 	var $DbId;
 	var $Active;
+	var $IsRecurring;
 
 	//__construct($dbId);
-	//__construct($itemName, $description, $itemPrice, $isFixedPrice, $paymentType, $itemId, $active);
+	//__construct($itemName, $description, $itemPrice, $isFixedPrice, $paymentType, $itemId, $active, $isRecurring);
 	function __construct() {
 		$numberOfArgs = func_num_args();
 		$args = func_get_arg();
@@ -22,6 +23,7 @@ class WmmsPaymentItem {
 			$this->PaymentType = PaymentTypes::prettyPrint($args[4]);
 			$this->DbId = $args[5];
 			$this->Active = $args[6];
+			$this->IsRecurring = $args[7] === 1;
 		} else {
 			$this->DbId = $args[0];
 			populateFromDatabase();
@@ -36,6 +38,7 @@ class WmmsPaymentItem {
 		$this->PaymentType = $dbItem['itemType'];
 		$this->Active = $dbItem['active'];
 		$this->Description = $dbItem['description'];
+		$this->IsRecurring = $dbItem['isRecurring'];
 
 		$priceOverride = db_GetPriceOverrideForUser(wp_get_current_user_id(), $this->DbId);
 		if($priceOverride != null) {
@@ -55,7 +58,7 @@ function GetActivePaymentItems() {
 	$dbItems = db_GetActivePaymentItems();
 	$paymentItems = array();
 	foreach($dbItems as $paymentItem) {
-		$currentItem = new WmmsPaymentItem($paymentItem['itemName'], $paymentItem['itemPrice'], $paymentItem['isFixedPrice'], $paymentItem['itemType'], $paymentItem['id'], true);
+		$currentItem = new WmmsPaymentItem($paymentItem['itemName'], $paymentItem['itemPrice'], $paymentItem['isFixedPrice'], $paymentItem['itemType'], $paymentItem['id'], true, $paymentItem['isRecurring'] === 1);
 		foreach($overrides as $priceOverride) {
 			if($priceOverride->ItemId == $currentItem->DbId) {
 				$currentItem->ItemPrice = $priceOverride->ItemPrice;
@@ -73,7 +76,7 @@ function GetAllPaymentItems() {
 	$dbItems = db_GetAllPaymentItems();
 	$paymentItems = array();
 	foreach($dbItems as $paymentItem) {
-		$currentItem = new WmmsPaymentItem($paymentItem['itemName'], $paymentItem['itemPrice'], $paymentItem['isFixedPrice'], $paymentItem['itemType'], $paymentItem['id'], $paymentItem['active']);
+		$currentItem = new WmmsPaymentItem($paymentItem['itemName'], $paymentItem['itemPrice'], $paymentItem['isFixedPrice'], $paymentItem['itemType'], $paymentItem['id'], $paymentItem['active'], $paymentItem['id'], $paymentItem['isRecurring'] === 1);
 
 		$paymentItems = $currentItem;
 	}

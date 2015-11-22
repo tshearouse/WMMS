@@ -12,6 +12,7 @@ function db_CreatePaymentItemsTableIfNotExists() {
 		. " isFixedPrice BIT"
 		. " active BIT"
 		. " itemType INT NOT NULL"
+		. " isRecurring BIT"
 		. " id INT NOT NULL AUTO_INCREMENT"
 		. " PRIMARY KEY ( id ));";
 		require_once(ABSPATH . "wp_admin/includes/upgrade.php");
@@ -55,13 +56,14 @@ function db_InsertOrUpdatePaymentItem($paymentItem) {
 	$dbItemPrice = floatval($paymentItem->ItemPrice);
 	$dbIsFixed = $paymentItem->IsFixedPrice === true;
 	$dbIsActive = $paymentItem->Active === true;
+	$dbIsRecurring = $paymentItem->IsRecurring === true;
 	$dbPaymentType = intval($paymentItem->PaymentType);
 	$item = db_GetPaymentItemById($dbItemId);
 	if($dbItemId < 0 || $item == null) {
-		$wpdb->insert($tableName, array('itemName' => $dbItemName, 'description' => $dbDescription, 'itemPrice' => $dbItemPrice, 'isFixedPrice' => $dbIsFixed, 'active' => $dbIsActive, 'itemType' => $dbPaymentType));
+		$wpdb->insert($tableName, array('itemName' => $dbItemName, 'description' => $dbDescription, 'itemPrice' => $dbItemPrice, 'isFixedPrice' => $dbIsFixed, 'active' => $dbIsActive, 'itemType' => $dbPaymentType, 'isRecurring' => $dbIsRecurring));
 	} else {
 		$wpdb->update($tableName, 
-				array('itemName' => $dbItemName, 'description' => $dbDescription, 'itemPrice' => $dbItemPrice, 'isFixedPrice' => $dbIsFixed, 'active' => $dbIsActive, 'itemType' => $dbPaymentType),
+				array('itemName' => $dbItemName, 'description' => $dbDescription, 'itemPrice' => $dbItemPrice, 'isFixedPrice' => $dbIsFixed, 'active' => $dbIsActive, 'itemType' => $dbPaymentType, 'isRecurring' => $dbIsRecurring),
 				array('id' => $dbItemId));
 	}
 }

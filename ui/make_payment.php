@@ -4,7 +4,13 @@ require_once('../business_layer/payment_items.php');
 
 if(isset($_GET['wmms_item'])) {
 	$itemId = intval($_GET['wmms_item']);
-	showPaymentSelectionScreen($itemId);
+	$paymentItem = new WmmsPaymentItem($itemId);
+	
+	$itemPrice = $paymentItem->ItemPrice;
+	if(isset($_GET['wmms_item_price'])) {
+		$itemPrice = sanitizePrice($_GET['wmms_item_price']);
+	}
+	showPaymentSelectionScreen($itemId, $itemPrice);
 } else {
 	showActivePaymentItems();
 }
@@ -17,24 +23,33 @@ function showActivePaymentItems() {
 }
 
 function showPaymentItem($paymentItem) {
-	showItemInfo($paymentItem);
-	echo "<a href='make_payment.php?wmms_item=" . $paymentItem->DbId . "'>Buy this</a></p>";
+	echo "<form target='make_payment.php' action='GET' >";
+	showItemInfo($paymentItem, $paymentItem->ItemPrice, true);
+
+	echo "<input type='hidden' name='wmms_item' value='" . $paymentItem->DbId . "' />";
+	echo "<input type='submit' name='submit'>Buy this</input></form></p>";
 }
 
-function showItemInfo($paymentItem) {
+function showItemInfo($paymentItem, $price, $allowEditAmount) {
 	echo "<hr />";
 	echo "<p><b>" . $paymentItem->ItemName;
-	if($paymentItem->IsFixedPrice !== true) {
+	if($paymentItem->IsFixedPrice !== true && $allowEditAmount) {
 		echo " - Suggested Price";
 	}
-	echo ": $" . prettyPrintPrice($paymentItem->ItemPrice) . "</b>";
-	echo "<br />" . $paymentItem->Description . "<br />";
+	echo ": $";
+	$prettyPrice = prettyPrintPrice($price);
+	if($paymentItem->IsFixedPrice !== true && $allowEditAmount) {
+		echo "<input type='textbox' name='wmms_item_price'>$prettyPrice</input>";
+	} else {
+		echo $prettyPrice;
+	}
+	echo "</b><br />" . $paymentItem->Description . "<br />";
 }
 
-function showPaymentSelectionScreen($itemId) {
-	$paymentItem = new WmmsPaymentItem($itemId);
-	showItemInfo($paymentItem);
-	
+function showPaymentSelectionScreen($paymentItem, $itemPrice) {
+	showItemInfo($paymentItem, $itemPrice, false);
+	require_once 'payment_paypal.php';
+	printPaypalButton($paymentItem, $itemPrice);
 	//TODO: Add payment buttons for Paypal, Dwolla, etc.
 	//Can we make that modular to minimize change when we add new payment methods?
 }
