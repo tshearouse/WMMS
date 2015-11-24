@@ -36,7 +36,7 @@ class WmmsPayment {
 		$memberData = new WmmsMember($userId);
 		$date = date("Y-m-d");
 		
-		if(date_add($date, date_interval_create_from_date_string("7 days")) > $memberData->PaidThroughDate) { 
+		if($date > date_add($memberData->PaidThroughDate, date_interval_create_from_date_string("7 days"))) { 
 			//If membership has lapsed or not started, begin from today.
 			$memberData->PaidThroughDate = $date;
 		}
